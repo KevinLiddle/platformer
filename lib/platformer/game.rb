@@ -1,6 +1,5 @@
-Hasu.load 'lib/platformer/quad.rb'
-Hasu.load 'lib/platformer/quad.rb'
 Hasu.load 'lib/platformer/levels.rb'
+Hasu.load 'lib/platformer/wat_bro.rb'
 
 module Platformer
   class Game
@@ -18,7 +17,6 @@ module Platformer
       current_level.update
       if current_level.done?
         completed_levels << current_level
-        window.flush
       end
     end
 
@@ -32,9 +30,13 @@ module Platformer
 
     def levels
       @levels ||= [
-        Levels::Start.new(window),
-        Levels::Hell.new(window)
-      ]
+        Levels::Start,
+        Levels::Hell
+      ].map { |level_klass| level_klass.new(window, wat_bro) }
+    end
+
+    def wat_bro
+      @wat_bro ||= WatBro.new(window)
     end
 
   end

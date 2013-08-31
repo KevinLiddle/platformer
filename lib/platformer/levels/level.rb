@@ -5,18 +5,18 @@ module Platformer
       attr_reader :done
       alias_method :done?, :done
 
-      def initialize(window, background_image_location)
+      def initialize(window, wat_bro)
         @window = window
-        @background_image = Image.new(window, background_image_location, true)
+        @wat_bro = wat_bro
         @done = false
       end
 
       def draw
-        background_image.draw(0, 0, 0)
+        raise_implemented_error(:draw)
       end
 
       def update
-        raise 'This guy. You gotta implement this in your level!'
+        raise_implemented_error(:update)
       end
 
       def complete_level!
@@ -25,7 +25,11 @@ module Platformer
 
       private
 
-      attr_reader :window, :background_image
+      attr_reader :window, :wat_bro
+
+      def raise_implemented_error(method_name)
+        raise "This guy. You gotta implement #{method_name} in your level!"
+      end
 
     end
   end
