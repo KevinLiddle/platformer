@@ -5,13 +5,18 @@ module Platformer
       attr_reader :done
       alias_method :done?, :done
 
-      def initialize(window)
+      def initialize(window, background_image_location)
         @window = window
+        @background_image = Image.new(window, background_image_location, true)
         @done = false
       end
 
+      def draw
+        background_image.draw(0, 0, 0)
+      end
+
       def update
-        raise 'Wat bro? You gots ta be able to update!'
+        raise 'This guy. You gotta implement this in your level!'
       end
 
       def complete_level!
@@ -20,7 +25,7 @@ module Platformer
 
       private
 
-      attr_reader :window
+      attr_reader :window, :background_image
 
     end
   end
