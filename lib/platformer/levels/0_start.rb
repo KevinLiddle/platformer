@@ -5,8 +5,11 @@ module Platformer
   module Levels
     class Start < Level
 
+      def initialize(window)
+        super(window, "media/clouds.png")
+      end
+
       def update
-        Image.new(window, "media/clouds.png", true).draw(0, 0, 0)
         complete_level! if window.button_down?(Gosu::KbSpace)
       end
 

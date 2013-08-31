@@ -14,14 +14,13 @@ class Window < Hasu::Window
   end
 
   def draw
-    @game.start
+    @game.draw
   end
 
   def update
     @game.update
   end
 
-  private
 end
 
 Window.run

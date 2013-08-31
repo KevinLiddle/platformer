@@ -10,12 +10,11 @@ module Platformer
       @completed_levels = []
     end
 
-    def start
-      levels.first.update
+    def draw
+      current_level.draw
     end
 
     def update
-      current_level = (levels - completed_levels).first
       current_level.update
       if current_level.done?
         completed_levels << current_level
@@ -27,19 +26,15 @@ module Platformer
 
     attr_reader :window, :completed_levels
 
+    def current_level
+      (levels - completed_levels).first
+    end
+
     def levels
       @levels ||= [
         Levels::Start.new(window),
         Levels::Hell.new(window)
       ]
-    end
-
-    def center_x(object_width)
-      window.width/2.0 - object_width/2.0
-    end
-
-    def center_y(object_height)
-      window.height/2.0 - object_height/2.0
     end
 
   end

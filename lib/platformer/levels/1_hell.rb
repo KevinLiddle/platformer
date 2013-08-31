@@ -6,8 +6,12 @@ module Platformer
   module Levels
     class Hell < Level
 
-      def update
-        Image.new(window, "media/hieronymous_bosch.jpg", true).draw(0, 0, 0)
+      def initialize(window)
+        super(window, "media/hieronymous_bosch.jpg")
+      end
+
+      def draw
+        super
         Quad.new(
           window,
           0,
@@ -16,6 +20,9 @@ module Platformer
           window.height,
           Colors::GREEN
         ).draw
+      end
+
+      def update
       end
 
     end
