@@ -1,3 +1,6 @@
+Hasu.load 'lib/utils/buttons.rb'
+Hasu.load 'lib/utils/image.rb'
+
 module Platformer
   class WatBro
 
@@ -8,10 +11,11 @@ module Platformer
 
     def initialize(window)
       @window = window
-      @image = Image.new(window, 'media/wat-bro.png', true)
+      @image = Utils::Image.new(window, 'media/wat-bro.png', true)
       @x = 10
       @y = floor_height
       @midair = false
+      @direction = RIGHT
     end
 
     def draw
@@ -34,10 +38,10 @@ module Platformer
     attr_reader :window, :image, :midair, :direction
 
     def set_horizontal_motion
-      if window.button_down?(Gosu::KbRight)
+      if window.button_down?(Utils::Buttons::RIGHT)
         @x += RUN_SPEED
         @direction = RIGHT
-      elsif window.button_down?(Gosu::KbLeft)
+      elsif window.button_down?(Utils::Buttons::LEFT)
         @x -= RUN_SPEED
         @direction = LEFT
       end
@@ -47,7 +51,7 @@ module Platformer
       if midair
         @t += 0.5
         @y = calculate_y
-      elsif window.button_down?(Gosu::KbSpace)
+      elsif window.button_down?(Utils::Buttons::SPACE)
         jump!
       end
     end
