@@ -6,7 +6,7 @@ class Window < Hasu::Window
   WIDTH  = 1024
 
   def initialize
-    super(WIDTH, HEIGHT, false, 1.0)
+    super(WIDTH, HEIGHT, false)
   end
 
   def reset
