@@ -1,34 +1,56 @@
 module Platformer
   class WatBro
 
-    JUMP_SPEED = -75.0
+    JUMP_SPEED = -75
+    RUN_SPEED = 10
+    RIGHT = :right
+    LEFT = :left
 
     def initialize(window)
       @window = window
       @image = Image.new(window, 'media/wat-bro.png', true)
-      @x = 10.0
+      @x = 10
       @y = floor_height
       @midair = false
     end
 
     def draw
-      image.draw(@x, @y, 1)
+      case direction
+      when RIGHT
+        image.draw(@x, @y, 1)
+      when LEFT
+        image.draw_rot(@x, @y, 1, 180, 1, 0, 1, -1)
+      end
     end
 
     def update
-      if midair
-        @t += 2.0
-        @y = calculate_y
-      elsif window.button_down?(Gosu::KbSpace)
-        jump!
-      end
-
+      set_vertial_motion
+      set_horizontal_motion
       hit_ground! if @y > floor_height
     end
 
     private
 
-    attr_reader :window, :image, :midair
+    attr_reader :window, :image, :midair, :direction
+
+    def set_horizontal_motion
+      if window.button_down?(Gosu::KbRight)
+        @x += RUN_SPEED
+        @direction = RIGHT
+      elsif window.button_down?(Gosu::KbLeft)
+        @x -= RUN_SPEED
+        @direction = LEFT
+      end
+    end
+
+    def set_vertial_motion
+      if midair
+        @t += 0.5
+        @y = calculate_y
+      elsif window.button_down?(Gosu::KbSpace)
+        jump!
+      end
+    end
 
     def jump!
       @midair = true
@@ -46,7 +68,7 @@ module Platformer
     end
 
     def floor_height
-      @floor_height ||= window.height - image.height - 50.0
+      @floor_height ||= window.height - image.height - 50
     end
 
   end
