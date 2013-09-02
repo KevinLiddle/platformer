@@ -1,7 +1,7 @@
 Hasu.load 'lib/platformer/levels/level.rb'
 Hasu.load 'lib/platformer/quad.rb'
-Hasu.load 'media/colors.rb'
-Hasu.load 'media/image.rb'
+Hasu.load 'lib/utils/colors.rb'
+Hasu.load 'lib/utils/image.rb'
 
 module Platformer
   module Levels
@@ -49,11 +49,11 @@ module Platformer
       end
 
       def platform_color
-        @platform_color ||= Colors.rgba(0x554d30ff)
+        @platform_color ||= Utils::Colors.rgba(0x554d30ff)
       end
 
       def background_image
-        @background_image ||= Image.new(window, 'media/hieronymous_bosch.jpg', true)
+        @background_image ||= Utils::Image.new(window, 'media/hieronymous_bosch.jpg', true)
       end
 
     end
