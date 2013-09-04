@@ -8,13 +8,15 @@ module Platformer
     RUN_SPEED = 10
     RIGHT = :right
     LEFT = :left
+    STOPPING_DISTANCE = 50
 
     def initialize(window)
       @window = window
       @image = Utils::Image.new(window, 'media/wat-bro.png', true)
-      @x = 10
+      @x = 12
       @y = floor_height
       @midair = false
+      @sliding = false
       @direction = RIGHT
     end
 
@@ -35,30 +37,41 @@ module Platformer
 
     private
 
-    attr_reader :window, :image, :midair, :direction
+    attr_reader :window, :image, :midair, :sliding, :direction
 
     def set_horizontal_motion
-      if window.button_down?(Utils::Buttons::RIGHT)
+      if window.button_down?(Utils::Buttons::RIGHT) || (midair && direction == RIGHT)
         @x += RUN_SPEED
         @direction = RIGHT
-      elsif window.button_down?(Utils::Buttons::LEFT)
+        start_slide
+      elsif window.button_down?(Utils::Buttons::LEFT) || (midair && direction == LEFT)
         @x -= RUN_SPEED
         @direction = LEFT
+        start_slide
+      elsif sliding
+        @x_t += 0.5
+        @x = calculate_x_sliding
       end
     end
 
     def set_vertial_motion
       if midair
-        @t += 0.5
+        @y_t += 0.5
         @y = calculate_y
       elsif window.button_down?(Utils::Buttons::SPACE)
         jump!
       end
     end
 
+    def start_slide
+      @sliding = true
+      @x_t = 0
+      @x_0 = @x
+    end
+
     def jump!
       @midair = true
-      @t = 0
+      @y_t = 0
       @y_0 = @y
     end
 
@@ -67,8 +80,21 @@ module Platformer
       @y = floor_height
     end
 
+    def calculate_x_sliding
+      if (@x - @x_0).abs >= STOPPING_DISTANCE
+        @sliding = false
+        return @x
+      else
+        if direction == RIGHT
+          @x_0 + (@x_t * RUN_SPEED) - (0.5 * (@x_t ** 2))
+        else
+          @x_0 - (@x_t * RUN_SPEED) + (0.5 * (@x_t ** 2))
+        end
+      end
+    end
+
     def calculate_y
-      @y_0 + (@t * JUMP_SPEED) + (10.0 * (@t ** 2))/2.0
+      @y_0 + (@y_t * JUMP_SPEED) + (5.0 * (@y_t ** 2))
     end
 
     def floor_height
