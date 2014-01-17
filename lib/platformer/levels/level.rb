@@ -5,9 +5,12 @@ module Platformer
       attr_reader :done
       alias_method :done?, :done
 
-      def initialize(window, wat_bro)
+      def initialize(window)
+        setup_level(window)
+      end
+
+      def setup_level(window)
         @window = window
-        @wat_bro = wat_bro
         @done = false
       end
 
@@ -16,7 +19,6 @@ module Platformer
       end
 
       def update
-        raise_implemented_error(:update)
       end
 
       def complete_level!
