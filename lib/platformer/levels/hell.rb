@@ -1,11 +1,17 @@
-Hasu.load 'lib/platformer/levels/level.rb'
-Hasu.load 'lib/platformer/quad.rb'
-Hasu.load 'lib/utils/colors.rb'
-Hasu.load 'lib/utils/image.rb'
+require 'platformer/levels/level'
+require 'platformer/quad'
+require 'utils/colors'
+require 'utils/image'
 
 module Platformer
   module Levels
     class Hell < Level
+
+      def initialize(window, wat_bro)
+        setup_level(window)
+        @wat_bro = wat_bro
+        @wat_bro.register_buttons!
+      end
 
       def draw
         draw_background
@@ -19,6 +25,8 @@ module Platformer
       end
 
       private
+
+      attr_reader :window, :wat_bro
 
       def draw_background
         background_image.draw(0, 0, 0)

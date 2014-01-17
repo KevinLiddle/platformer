@@ -1,12 +1,12 @@
-Hasu.load 'lib/platformer/levels.rb'
-Hasu.load 'lib/platformer/wat_bro.rb'
+require 'platformer/levels'
+require 'platformer/wat_bro'
 
 module Platformer
   class Game
 
     def initialize(window)
       @window = window
-      @completed_levels = []
+      set_current_level!(levels.first)
     end
 
     def draw
@@ -16,23 +16,24 @@ module Platformer
     def update
       current_level.update
       if current_level.done?
-        completed_levels << current_level
+        set_current_level!(levels[levels.index {|level| level[:klass] == current_level.class} + 1])
       end
     end
 
     private
 
-    attr_reader :window, :completed_levels
-
-    def current_level
-      (levels - completed_levels).first
-    end
+    attr_reader :window, :current_level
 
     def levels
       @levels ||= [
-        Levels::Start,
-        Levels::Hell
-      ].map { |level_klass| level_klass.new(window, wat_bro) }
+        {klass: Levels::Start, args: [window]},
+        {klass: Levels::Hell, args: [window, wat_bro]}
+      ]
+    end
+
+    def set_current_level!(level)
+      window.reset_buttons!
+      @current_level = level[:klass].new(*level[:args])
     end
 
     def wat_bro

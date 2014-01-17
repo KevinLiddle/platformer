@@ -1,7 +1,7 @@
-require 'hasu'
+require 'gosu'
 
 module Utils
-  class Buttons
+  module Buttons
     RIGHT = Gosu::KbRight
     LEFT  = Gosu::KbLeft
     SPACE = Gosu::KbSpace

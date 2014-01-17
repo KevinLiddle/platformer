@@ -1,104 +1,90 @@
-Hasu.load 'lib/utils/buttons.rb'
-Hasu.load 'lib/utils/image.rb'
+require 'physics/free_body'
+require 'utils/buttons'
+require 'utils/image'
 
 module Platformer
   class WatBro
 
     JUMP_SPEED = -75
     RUN_SPEED = 10
-    RIGHT = :right
-    LEFT = :left
+    AIR_SWIM_SPEED = 2
     STOPPING_DISTANCE = 50
 
     def initialize(window)
       @window = window
-      @image = Utils::Image.new(window, 'media/wat-bro.png', true)
-      @x = 12
-      @y = floor_height
       @midair = false
-      @sliding = false
-      @direction = RIGHT
+      @body_coords = ::Physics::FreeBody.new(12, floor_height)
     end
 
     def draw
-      case direction
-      when RIGHT
-        image.draw(@x, @y, 1)
-      when LEFT
-        image.draw_rot(@x, @y, 1, 180, 1, 0, 1, -1)
+      case body_coords.direction
+      when Physics::FreeBody::RIGHT
+        image.draw(body_coords.x, body_coords.y, 1)
+      when Physics::FreeBody::LEFT
+        image.draw_rot(body_coords.x, body_coords.y, 1, 180, 1, 0, 1, -1)
       end
     end
 
     def update
       set_vertial_motion
       set_horizontal_motion
-      hit_ground! if @y > floor_height
+      hit_ground! if body_coords.y > floor_height
+    end
+
+    def register_buttons!
+      window.register_button_press!(Utils::Buttons::SPACE, self, :jump!)
+      window.register_button_hold!(Utils::Buttons::RIGHT, self, :run!, Physics::FreeBody::RIGHT)
+      window.register_button_hold!(Utils::Buttons::LEFT, self, :run!, Physics::FreeBody::LEFT)
+    end
+
+    def run!(direction)
+      body_coords.move_horizontal!(direction, horizontal_speed)
     end
 
     private
 
-    attr_reader :window, :image, :midair, :sliding, :direction
+    attr_reader :window, :midair, :body_coords
 
     def set_horizontal_motion
-      if window.button_down?(Utils::Buttons::RIGHT) || (midair && direction == RIGHT)
-        @x += RUN_SPEED
-        @direction = RIGHT
-        start_slide
-      elsif window.button_down?(Utils::Buttons::LEFT) || (midair && direction == LEFT)
-        @x -= RUN_SPEED
-        @direction = LEFT
-        start_slide
-      elsif sliding
-        @x_t += 0.5
-        @x = calculate_x_sliding
-      end
+      body_coords.move_horizontal!(body_coords.direction, RUN_SPEED) if midair
+
+      body_coords.slide! if (!running? && body_coords.xv != 0 && !midair)
+    end
+
+    def running?
+      window.button_down?(Utils::Buttons::LEFT) || window.button_down?(Utils::Buttons::RIGHT)
     end
 
     def set_vertial_motion
       if midair
-        @y_t += 0.5
-        @y = calculate_y
-      elsif window.button_down?(Utils::Buttons::SPACE)
-        jump!
+        body_coords.set_vertical_position!
+        body_coords.set_vertical_velocity!
       end
     end
 
-    def start_slide
-      @sliding = true
-      @x_t = 0
-      @x_0 = @x
-    end
-
     def jump!
-      @midair = true
-      @y_t = 0
-      @y_0 = @y
+      unless @midair
+        @midair = true
+        body_coords.yv = JUMP_SPEED
+      end
     end
 
     def hit_ground!
       @midair = false
-      @y = floor_height
+      body_coords.y = floor_height
+      body_coords.yv = 0
     end
 
-    def calculate_x_sliding
-      if (@x - @x_0).abs >= STOPPING_DISTANCE
-        @sliding = false
-        return @x
-      else
-        if direction == RIGHT
-          @x_0 + (@x_t * RUN_SPEED) - (0.5 * (@x_t ** 2))
-        else
-          @x_0 - (@x_t * RUN_SPEED) + (0.5 * (@x_t ** 2))
-        end
-      end
-    end
-
-    def calculate_y
-      @y_0 + (@y_t * JUMP_SPEED) + (5.0 * (@y_t ** 2))
+    def horizontal_speed
+      midair ? AIR_SWIM_SPEED : RUN_SPEED
     end
 
     def floor_height
       @floor_height ||= window.height - image.height - 50
+    end
+
+    def image
+      @image ||= Utils::Image.new(window, 'media/wat-bro.png', true)
     end
 
   end
