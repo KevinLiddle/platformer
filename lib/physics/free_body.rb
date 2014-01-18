@@ -35,7 +35,7 @@ module Physics
 
     def move_horizontal!(direction, speed)
       @direction = direction
-      @x += (directional_coefficient * speed)
+      @x += (directional_coefficient * speed * TIME_DELTA)
       @xv = speed * directional_coefficient
     end
 

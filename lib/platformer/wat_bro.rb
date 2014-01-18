@@ -6,7 +6,7 @@ module Platformer
   class WatBro
 
     JUMP_SPEED = -75
-    RUN_SPEED = 10
+    RUN_SPEED = 20
     AIR_SWIM_SPEED = 2
     STOPPING_DISTANCE = 50
 
@@ -26,8 +26,8 @@ module Platformer
     end
 
     def update
-      set_vertial_motion
-      set_horizontal_motion
+      set_vertial_motion!
+      set_horizontal_motion!
       hit_ground! if body_coords.y > floor_height
     end
 
@@ -38,32 +38,34 @@ module Platformer
     end
 
     def run!(direction)
-      body_coords.move_horizontal!(direction, horizontal_speed)
+      body_coords.move_horizontal!(direction, RUN_SPEED) unless midair
     end
 
     private
 
     attr_reader :window, :midair, :body_coords
 
-    def set_horizontal_motion
-      body_coords.move_horizontal!(body_coords.direction, RUN_SPEED) if midair
-
-      body_coords.slide! if (!running? && body_coords.xv != 0 && !midair)
+    def set_horizontal_motion!
+      if midair
+        body_coords.move_horizontal!(body_coords.direction, body_coords.xv.abs)
+      else
+        body_coords.slide! if (!running? && body_coords.xv != 0)
+      end
     end
 
-    def running?
-      window.button_down?(Utils::Buttons::LEFT) || window.button_down?(Utils::Buttons::RIGHT)
-    end
-
-    def set_vertial_motion
+    def set_vertial_motion!
       if midair
         body_coords.set_vertical_position!
         body_coords.set_vertical_velocity!
       end
     end
 
+    def running?
+      window.button_down?(Utils::Buttons::LEFT) || window.button_down?(Utils::Buttons::RIGHT)
+    end
+
     def jump!
-      unless @midair
+      unless midair
         @midair = true
         body_coords.yv = JUMP_SPEED
       end
@@ -73,10 +75,6 @@ module Platformer
       @midair = false
       body_coords.y = floor_height
       body_coords.yv = 0
-    end
-
-    def horizontal_speed
-      midair ? AIR_SWIM_SPEED : RUN_SPEED
     end
 
     def floor_height
