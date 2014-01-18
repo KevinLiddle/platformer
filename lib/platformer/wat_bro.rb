@@ -54,10 +54,7 @@ module Platformer
     end
 
     def set_vertial_motion!
-      if midair
-        body_coords.set_vertical_position!
-        body_coords.set_vertical_velocity!
-      end
+      body_coords.move_vertical! if midair
     end
 
     def running?
