@@ -26,30 +26,33 @@ module Physics
     # d = v0t + 1/2*at^2
     # v = v0 + at
 
-    def move_vertical!
-      @y = calculate_position(y, yv, GRAVITY)
+    def move_vertical
+      @y += calculate_position(yv, GRAVITY)
       @yv = yv + GRAVITY * TIME_DELTA
     end
 
-    def move_horizontal!(direction, speed)
-      @direction = direction
-      @x += (directional_coefficient * speed * TIME_DELTA)
-      @xv = speed * directional_coefficient
+    def move_horizontal(direction, speed)
+      set_horizontal_velocity(direction, speed)
+      @x += calculate_position(xv, 0)
     end
 
-    def slide!
+    def slide
       if xv.abs >= 1
-        @x = calculate_position(x, xv, (-directional_coefficient * COEFFICIENT_OF_FRICTION))
         @xv = xv - (COEFFICIENT_OF_FRICTION * directional_coefficient * TIME_DELTA)
       else
         @xv = 0
       end
     end
 
+    def set_horizontal_velocity(direction, speed)
+      @direction = direction
+      @xv = speed * directional_coefficient
+    end
+
     private
 
-    def calculate_position(initial_position, velocity, acceleration)
-      initial_position + (velocity * TIME_DELTA) + ((acceleration / 2) * (TIME_DELTA ** 2))
+    def calculate_position(velocity, acceleration)
+      (velocity * TIME_DELTA) + ((acceleration / 2) * (TIME_DELTA ** 2))
     end
 
     def directional_coefficient

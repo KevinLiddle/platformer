@@ -6,7 +6,7 @@ module Platformer
 
     def initialize(window)
       @window = window
-      set_current_level!(levels.first)
+      set_current_level(levels.first)
     end
 
     def draw
@@ -16,7 +16,7 @@ module Platformer
     def update
       current_level.update
       if current_level.done?
-        set_current_level!(levels[levels.index {|level| level[:klass] == current_level.class} + 1])
+        set_current_level(levels[levels.index {|level| level[:klass] == current_level.class} + 1])
       end
     end
 
@@ -31,8 +31,8 @@ module Platformer
       ]
     end
 
-    def set_current_level!(level)
-      window.reset_buttons!
+    def set_current_level(level)
+      window.reset_buttons
       @current_level = level[:klass].new(*level[:args])
     end
 
