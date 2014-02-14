@@ -10,7 +10,7 @@ module Platformer
       def initialize(window, wat_bro)
         setup_level(window)
         @wat_bro = wat_bro
-        @wat_bro.register_buttons!
+        @wat_bro.register_buttons
       end
 
       def draw

@@ -21,7 +21,7 @@ module Platformer
       def update
       end
 
-      def complete_level!
+      def complete_level
         @done = true
       end
 

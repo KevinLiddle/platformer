@@ -6,7 +6,7 @@ class PlatformerWindow < Gosu::Window
   WIDTH  = 1024
 
   def initialize
-    reset_buttons!
+    reset_buttons
     super(WIDTH, HEIGHT, false)
     reset
   end
@@ -31,19 +31,19 @@ class PlatformerWindow < Gosu::Window
     initiate_button_callback(callback) if callback
   end
 
-  def register_button_press!(button, subject, method, *args)
+  def register_button_press(button, subject, method, *args)
     ensure_button_uniqueness(button) do
       @button_press_callbacks[button] = {subject: subject, method: method, args: args}
     end
   end
 
-  def register_button_hold!(button, subject, method, *args)
+  def register_button_hold(button, subject, method, *args)
     ensure_button_uniqueness(button) do
       @button_hold_callbacks[button] = {subject: subject, method: method, args: args}
     end
   end
 
-  def reset_buttons!
+  def reset_buttons
     @button_press_callbacks = {}
     @button_hold_callbacks = {}
   end

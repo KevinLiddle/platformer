@@ -8,7 +8,7 @@ module Platformer
 
       def initialize(window)
         setup_level(window)
-        @window.register_button_press!(Utils::Buttons::SPACE, self, :complete_level!)
+        @window.register_button_press(Utils::Buttons::SPACE, self, :complete_level)
       end
 
       def draw

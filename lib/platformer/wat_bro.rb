@@ -6,9 +6,8 @@ module Platformer
   class WatBro
 
     JUMP_SPEED = -75
-    RUN_SPEED = 20
+    RUN_SPEED = 30
     AIR_SWIM_SPEED = 2
-    STOPPING_DISTANCE = 50
 
     def initialize(window)
       @window = window
@@ -26,49 +25,46 @@ module Platformer
     end
 
     def update
-      set_vertial_motion!
-      set_horizontal_motion!
-      hit_ground! if body_coords.y > floor_height
+      set_vertial_motion
+      set_horizontal_motion
+      hit_ground if body_coords.y > floor_height
     end
 
-    def register_buttons!
-      window.register_button_press!(Utils::Buttons::SPACE, self, :jump!)
-      window.register_button_hold!(Utils::Buttons::RIGHT, self, :run!, Physics::FreeBody::RIGHT)
-      window.register_button_hold!(Utils::Buttons::LEFT, self, :run!, Physics::FreeBody::LEFT)
+    def register_buttons
+      window.register_button_press(Utils::Buttons::SPACE, self, :jump)
+      window.register_button_hold(Utils::Buttons::RIGHT, self, :run, Physics::FreeBody::RIGHT)
+      window.register_button_hold(Utils::Buttons::LEFT, self, :run, Physics::FreeBody::LEFT)
     end
 
-    def run!(direction)
-      body_coords.move_horizontal!(direction, RUN_SPEED) unless midair
+    def run(direction)
+      body_coords.set_horizontal_velocity(direction, RUN_SPEED) unless midair
     end
 
     private
 
     attr_reader :window, :midair, :body_coords
 
-    def set_horizontal_motion!
-      if midair
-        body_coords.move_horizontal!(body_coords.direction, body_coords.xv.abs)
-      else
-        body_coords.slide! if (!running? && body_coords.xv != 0)
-      end
+    def set_horizontal_motion
+      body_coords.move_horizontal(body_coords.direction, body_coords.xv.abs)
+      body_coords.slide if !midair && !running?
     end
 
-    def set_vertial_motion!
-      body_coords.move_vertical! if midair
+    def set_vertial_motion
+      body_coords.move_vertical if midair
     end
 
     def running?
       window.button_down?(Utils::Buttons::LEFT) || window.button_down?(Utils::Buttons::RIGHT)
     end
 
-    def jump!
+    def jump
       unless midair
         @midair = true
         body_coords.yv = JUMP_SPEED
       end
     end
 
-    def hit_ground!
+    def hit_ground
       @midair = false
       body_coords.y = floor_height
       body_coords.yv = 0
