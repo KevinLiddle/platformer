@@ -7,7 +7,8 @@ module Platformer
 
     JUMP_SPEED = -75
     RUN_SPEED = 30
-    AIR_SWIM_SPEED = 2
+    RUN_ACCELERATION = 2
+    AIR_SWIM_SPEED = 10
 
     def initialize(window)
       @window = window
@@ -37,7 +38,7 @@ module Platformer
     end
 
     def run(direction)
-      body_coords.set_horizontal_velocity(direction, RUN_SPEED) unless midair
+      body_coords.set_horizontal_velocity(direction, RUN_SPEED, RUN_ACCELERATION)
     end
 
     private

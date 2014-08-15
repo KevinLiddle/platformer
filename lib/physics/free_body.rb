@@ -7,8 +7,7 @@ module Physics
     RIGHT = :right
     LEFT = :left
 
-    attr_accessor :x, :y, :xv, :yv,
-      :direction
+    attr_accessor :x, :y, :xv, :yv, :direction
 
     def initialize(x, y, xv=0, yv=0)
       @x = x
@@ -31,8 +30,8 @@ module Physics
       @yv = yv + GRAVITY * TIME_DELTA
     end
 
-    def move_horizontal(direction, speed)
-      set_horizontal_velocity(direction, speed)
+    def move_horizontal(dir, speed)
+      set_horizontal_velocity(dir, speed)
       @x += calculate_position(xv, 0)
     end
 
@@ -44,9 +43,16 @@ module Physics
       end
     end
 
-    def set_horizontal_velocity(direction, speed)
-      @direction = direction
-      @xv = speed * directional_coefficient
+    def set_horizontal_velocity(dir, max_speed, acceleration=100)
+      something = xv + (acceleration * directional_coefficient(dir) * TIME_DELTA)
+      @xv = something.abs >= max_speed ? (max_speed * directional_coefficient(dir)) : something
+      @direction = if xv < 0
+                     LEFT
+                   elsif xv > 0
+                     RIGHT
+                   else
+                     @direction
+                   end
     end
 
     private
@@ -55,8 +61,8 @@ module Physics
       (velocity * TIME_DELTA) + ((acceleration / 2) * (TIME_DELTA ** 2))
     end
 
-    def directional_coefficient
-      direction == RIGHT ? 1 : -1
+    def directional_coefficient(dir = direction)
+      dir == RIGHT ? 1 : -1
     end
 
   end
